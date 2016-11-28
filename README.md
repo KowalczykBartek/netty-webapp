@@ -1,4 +1,4 @@
-[![][license img]][license]
+![][license img]
 
 Web application created primarily for learning purposes. 
 
