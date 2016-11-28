@@ -10,6 +10,7 @@ import com.primary.repository.NotesRepository;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -17,6 +18,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.CharsetUtil;
 
+@ChannelHandler.Sharable
 public class GetNoteHandler extends SimpleChannelInboundHandler<Request>
 {
 	//Gson instances are Thread-safe
@@ -24,12 +26,11 @@ public class GetNoteHandler extends SimpleChannelInboundHandler<Request>
 
 	public static final GetNoteHandler instance = new GetNoteHandler();
 
-	private NotesRepository notesRepository = InMemoryDb.instance;
+	private final NotesRepository notesRepository = InMemoryDb.instance;
 
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception
 	{
-
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, //
 				Unpooled.copiedBuffer(gson.toJson(notesRepository.getNote("Janush")), CharsetUtil.UTF_8));
 

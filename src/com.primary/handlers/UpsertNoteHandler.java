@@ -23,7 +23,7 @@ public class UpsertNoteHandler extends SimpleChannelInboundHandler<Request>
 	 */
 	public static final UpsertNoteHandler instance = new UpsertNoteHandler();
 
-	private NotesRepository notesRepository = InMemoryDb.instance;
+	private final NotesRepository notesRepository = InMemoryDb.instance;
 
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception
