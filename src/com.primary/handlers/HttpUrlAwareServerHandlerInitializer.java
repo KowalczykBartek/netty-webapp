@@ -15,6 +15,7 @@ public class HttpUrlAwareServerHandlerInitializer extends ChannelInitializer<Soc
 
 		p.addLast(new HttpRequestDecoder());
 		p.addLast(new HttpResponseEncoder());
+		p.addLast(new ResponseToHttpResponseEncoder());
 
 		p.addLast(new BaseHttpRequestHandler());
 	}
