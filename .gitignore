@@ -1,0 +1,24 @@
+.idea/
+.classpath
+.settings/
+.gradle/
+*.iml
+target/
+build/
+buildSrc/.gradle/
+buildSrc/build/
+/gradle
+/.project
+api-designer*
+designer.sh
+MANIFEST.MF
+gradlew
+
+##Gradle-based build
+.gradle
+build/
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+build.gradle
