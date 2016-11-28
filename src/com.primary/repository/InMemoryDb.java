@@ -14,4 +14,10 @@ public class InMemoryDb implements NotesRepository
 	{
 		volatileDb.put(user, note);
 	}
+
+	@Override
+	public Object getNote(final String user)
+	{
+		return volatileDb.get(user);
+	}
 }

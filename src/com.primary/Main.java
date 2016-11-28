@@ -1,4 +1,4 @@
-package com.primary.bootstrap;
+package com.primary;
 
 import com.primary.handlers.HttpUrlAwareServerHandlerInitializer;
 
@@ -10,7 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-public class Server
+public class Main
 {
 	static final int PORT = Integer.parseInt(System.getProperty("port", "8080"));
 

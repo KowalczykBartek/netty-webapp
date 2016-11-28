@@ -1,20 +1,14 @@
 package com.primary.handlers;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 import java.util.Map;
 import java.util.Optional;
 
 import com.google.gson.Gson;
-import com.primary.ConcurrencyManager;
+import com.primary.concurrency.ConcurrencyManager;
 import com.primary.domain.Request;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -27,15 +21,6 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 	private static Gson gson = new Gson();
 
 	private final StringBuilder buf = new StringBuilder();
-
-	@Override
-	public void channelReadComplete(final ChannelHandlerContext ctx)
-	{
-		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
-
-		ctx.writeAndFlush(response)//
-				.addListener(ChannelFutureListener.CLOSE);
-	}
 
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Object msg) throws Exception
@@ -51,7 +36,7 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 			if (method.equals(HttpMethod.GET))
 			{
 				ctx.pipeline() //
-						.addLast(ConcurrencyManager.GET_STAGE,GetNoteHandler.instance);
+						.addLast(ConcurrencyManager.GET_STAGE, GetNoteHandler.instance);
 			}
 			else if (method.equals(HttpMethod.PUT))
 			{

@@ -1,4 +1,4 @@
-package com.primary;
+package com.primary.concurrency;
 
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
