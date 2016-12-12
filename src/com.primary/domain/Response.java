@@ -13,6 +13,11 @@ public class Response
 		this.body = body;
 	}
 
+	public Response(final HttpResponseStatus status)
+	{
+		this(status, "");
+	}
+
 	public HttpResponseStatus getStatus()
 	{
 		return status;

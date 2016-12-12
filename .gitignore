@@ -17,8 +17,10 @@ gradlew
 ##Gradle-based build
 .gradle
 build/
-gradle/
+/gradle/
 gradlew
 gradlew.bat
 settings.gradle
 build.gradle
+gradlew.bat
+gradle/

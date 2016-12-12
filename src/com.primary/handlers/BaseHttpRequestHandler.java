@@ -2,12 +2,12 @@ package com.primary.handlers;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.google.gson.Gson;
 import com.primary.concurrency.ConcurrencyManager;
 import com.primary.domain.Request;
-import com.primary.handlers.userrelatedhandlers.GetNoteHandler;
-import com.primary.handlers.userrelatedhandlers.UpsertNoteHandler;
+import com.primary.domain.Response;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -24,6 +24,14 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 
 	private final StringBuilder buf = new StringBuilder();
 
+	private final Map<String, Function<Request, Response>> routes;
+
+	public BaseHttpRequestHandler(final Map<String, Function<Request, Response>> routes)
+	{
+		this.routes = routes;
+	}
+
+
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Object msg) throws Exception
 	{
@@ -34,21 +42,12 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 			final String uri = request.uri();
 			final HttpMethod method = request.method();
 
-			//fixme - refactor
-			if (method.equals(HttpMethod.GET))
-			{
-				ctx.pipeline() //
-						.addLast(ConcurrencyManager.GET_STAGE, GetNoteHandler.instance);
-			}
-			else if (method.equals(HttpMethod.PUT))
-			{
-				ctx.pipeline() //
-						.addLast(ConcurrencyManager.PUT_STAGE, UpsertNoteHandler.instance);
-			}
-			else
-			{
-				//implement 404 or something :D
-			}
+			final Function<Request, Response> requestResponseFunction = //
+					Optional.ofNullable(routes.get(uri)).orElseGet(() -> routes.get("/404"));
+
+			ctx.pipeline() //
+					.addLast(ConcurrencyManager.HTTP_OPERATION_STAGE,//
+							new UserDefinerFunctionExecutorHandler(requestResponseFunction));
 		}
 
 		/*
