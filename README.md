@@ -1,21 +1,28 @@
 ![][license img]
 
-Web application created primarily for learning purposes. 
+Web application created primarily for learning purposes (mainly of Netty) - additionally entire stack call pretend to be non-blocking
 
-It would be cool to ends with such "path to function mapping" : 
-
-```
-( "/", new UpsertNoteRequestHandler() ) 
+Actually mapping looks like 
 
 ```
+("/", new HomeHandler());
+```
+
 maps to 
+
 ```
-Function<Request, Response> requestHandler = request -> {
+public class HomeHandler extends SimpleChannelInboundHandler<Request>
+{
+	@Override
+	protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception
+	{
+		supplyAsync(() -> new Response(HttpResponseStatus.NO_CONTENT, "Hello World"), ConcurrencyManager.HTTP_OPERATION_STAGE)//
+				.thenAcceptAsync(response -> //
+						ctx.writeAndFlush(response)//
+								.addListener(ChannelFutureListener.CLOSE));
+	}
 
-	notesRepository.upsertNote(request.getUser(), request.getPayload().get());
-
-	return new Response(HttpResponseStatus.OK);	
-};
+}
 ```
 
 #Powered by

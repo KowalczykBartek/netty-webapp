@@ -2,13 +2,11 @@ package com.primary.handlers;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.google.gson.Gson;
-import com.primary.concurrency.ConcurrencyManager;
 import com.primary.domain.Request;
-import com.primary.domain.Response;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -24,13 +22,12 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 
 	private final StringBuilder buf = new StringBuilder();
 
-	private final Map<String, Function<Request, Response>> routes;
+	private final Map<String, ChannelHandler> routes;
 
-	public BaseHttpRequestHandler(final Map<String, Function<Request, Response>> routes)
+	public BaseHttpRequestHandler(final Map<String, ChannelHandler> routes)
 	{
 		this.routes = routes;
 	}
-
 
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Object msg) throws Exception
@@ -42,12 +39,12 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 			final String uri = request.uri();
 			final HttpMethod method = request.method();
 
-			final Function<Request, Response> requestResponseFunction = //
-					Optional.ofNullable(routes.get(uri)).orElseGet(() -> routes.get("/404"));
+			final ChannelHandler handler = //
+					Optional.ofNullable(routes.get(uri))
+							.orElseThrow(() -> new RuntimeException("No routes defined"));
 
 			ctx.pipeline() //
-					.addLast(ConcurrencyManager.HTTP_OPERATION_STAGE,//
-							new UserDefinerFunctionExecutorHandler(requestResponseFunction));
+					.addLast(handler);
 		}
 
 		/*
