@@ -1,7 +1,11 @@
 package com.primary.cassandra;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.primary.domain.Entity;
 
 public class CassandraQueryService
 {
@@ -12,10 +16,10 @@ public class CassandraQueryService
 	 */
 	private static final String CREATE_SAMPLE_TABLE = //
 			"CREATE TABLE IF NOT EXISTS Storage.packages(" + //
-					"package timeuuid, " + //
+					"partition uuid, " + //
 					"key text, " + //
 					"value text, " + //
-					"PRIMARY KEY (package))";
+					"PRIMARY KEY (partition))";
 
 	private final Object lock = new Object();
 
@@ -28,6 +32,16 @@ public class CassandraQueryService
 	{
 		//fixme cluster with multiple contact points should be supported.
 		this.contactPoint = contactPoint;
+	}
+
+	public ResultSetFuture upsertEntity(final Entity entity)
+	{
+		final Statement statement = QueryBuilder.insertInto("Storage","packages")
+				.value("key", entity.getKey()) //
+				.value("value", entity.getValue()) //
+				.value("partition", entity.getPartition()); //
+
+		return session.executeAsync(statement);
 	}
 
 	/**
