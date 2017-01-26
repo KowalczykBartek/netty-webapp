@@ -40,7 +40,7 @@ public class BaseHttpRequestHandler extends SimpleChannelInboundHandler<Object>
 			final HttpMethod method = request.method();
 
 			final ChannelHandler handler = //
-					Optional.ofNullable(routes.get(uri))
+					Optional.ofNullable(routes.get("/"))
 							.orElseThrow(() -> new RuntimeException("No routes defined"));
 
 			ctx.pipeline() //

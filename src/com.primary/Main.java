@@ -24,11 +24,9 @@ public class Main
 
 	public static void main(String... args) throws InterruptedException
 	{
-		//fixme DI needed
-		final CassandraQueryService queryService = new CassandraQueryService(CASSANDRA_CONTACT_POINT);
-		queryService.initialize();
+		final CassandraQueryService queryService = CassandraQueryService.build(CASSANDRA_CONTACT_POINT);
 
-		System.err.println("Cluster initialized");
+		System.out.println("Cluster initialized");
 
 		final Map<String, ChannelHandler> routes = //
 				of("/", new HomeHandler(queryService));
@@ -46,7 +44,7 @@ public class Main
 
 			final Channel channel = serverBootstrap.bind(PORT).sync().channel();
 
-			System.err.println("Open your web browser and navigate to " +
+			System.out.println("Open your web browser and navigate to " +
 					"http://127.0.0.1:" + PORT + '/');
 
 			channel.closeFuture().sync();

@@ -59,13 +59,28 @@ public class HomeHandler extends SimpleChannelInboundHandler<Request>
 				@Override
 				public void onFailure(final Throwable t)
 				{
-					final Response response = new Response(HttpResponseStatus.INTERNAL_SERVER_ERROR, "Dammm....");
+					final Response response = new Response(HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
 					ctx.writeAndFlush(response)//
 							.addListener(ChannelFutureListener.CLOSE);
 				}
 			}, ConcurrencyManager.HTTP_OPERATION_STAGE);
-		}, ConcurrencyManager.HTTP_OPERATION_STAGE);
+		}, ConcurrencyManager.HTTP_OPERATION_STAGE) //
+
+				.whenCompleteAsync((result, throwable) -> {
+
+					/*
+					 * FIXME do it better, but for now, it handles error that comes from upper Future's result.
+					 */
+					if (throwable != null)
+					{
+						final Response response = new Response(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+
+						ctx.writeAndFlush(response)//
+								.addListener(ChannelFutureListener.CLOSE);
+					}
+
+				}, ConcurrencyManager.HTTP_OPERATION_STAGE);
 	}
 
 	private Entity extractFromMap(Map payload)
@@ -79,13 +94,13 @@ public class HomeHandler extends SimpleChannelInboundHandler<Request>
 
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+	{
 		cause.printStackTrace();
 
 		final Response response = new Response(HttpResponseStatus.INTERNAL_SERVER_ERROR, "Dammm....");
 
 		ctx.writeAndFlush(response)//
 				.addListener(ChannelFutureListener.CLOSE);
-
 	}
 }
