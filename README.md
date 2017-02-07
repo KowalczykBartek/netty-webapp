@@ -5,7 +5,7 @@ Web application created primarily for learning purposes (mainly of Netty) - addi
 Actually mapping looks like 
 
 ```
-("/", new HomeHandler());
+(Route.just("/", PUT), new HomeHandler());
 ```
 
 maps to 

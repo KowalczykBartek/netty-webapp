@@ -15,16 +15,14 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.CharsetUtil;
 
 
-public class ResponseToHttpResponseEncoder extends MessageToMessageEncoder<Response>
-{
-	@Override
-	protected void encode(final ChannelHandlerContext ctx, final Response msg, final List<Object> out) throws Exception
-	{
-		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, msg.getStatus(), //
-				Unpooled.copiedBuffer(msg.getBody(), CharsetUtil.UTF_8));
+public class ResponseToHttpResponseEncoder extends MessageToMessageEncoder<Response> {
+    @Override
+    protected void encode(final ChannelHandlerContext ctx, final Response msg, final List<Object> out) throws Exception {
+        final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, msg.getStatus(), //
+                Unpooled.copiedBuffer(msg.getBody(), CharsetUtil.UTF_8));
 
-		response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
 
-		out.add(response);
-	}
+        out.add(response);
+    }
 }
